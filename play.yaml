@@ -39,7 +39,7 @@ spec:
 
         - name: wait-for-postgres  # run to completion
           image: postgres:latest
-          command: "/bin/sh"
+          command: [ "/bin/sh" ]
           args:
             - -c
             - >
