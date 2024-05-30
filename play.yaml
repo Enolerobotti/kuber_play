@@ -14,18 +14,50 @@ spec:
       labels:
         app: playkube
     spec:
-#      volumes:
-#        - name: shared-data
-#          emptyDir: {}
+      volumes:
+        - name: shared-data
+          emptyDir: {}
       containers:
         - name: nginx
           image: nginx:latest
           ports:
             - containerPort: 80
+          volumeMounts:
+            - name: shared-data
+              mountPath: /usr/share/nginx/html
       initContainers:
         - name: postgres  # sidecar
           image: postgres:latest
           restartPolicy: Always
+          env:
+            - name: POSTGRES_USER
+              value: POSTGRES_USER
+            - name: POSTGRES_DB
+              value: POSTGRES_DB
+            - name: POSTGRES_PASSWORD
+              value: POSTGRES_PASSWORD
+
         - name: wait-for-postgres  # run to completion
           image: postgres:latest
-          command: ""
+          command: "/bin/sh"
+          args:
+            - -c
+            - >
+              set -x;
+              while [[ "$(pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB})" != *"accepting connections"* ]]; do 
+                echo '.'
+                sleep 15;
+              done
+          env:
+            - name: POSTGRES_USER
+              value: POSTGRES_USER
+            - name: POSTGRES_DB
+              value: POSTGRES_DB
+
+        - name: debian-container
+          image: debian
+          volumeMounts:
+            - name: shared-data
+              mountPath: /pod-data
+          command: [ "/bin/sh" ]
+          args: [ "-c", "echo Hello from the debian container > /pod-data/index.html" ]
