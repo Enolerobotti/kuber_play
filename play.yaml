@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: playkube
+  name: playkube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: playkube
+  template:
+    metadata:
+      labels:
+        app: playkube
+    spec:
+#      volumes:
+#        - name: shared-data
+#          emptyDir: {}
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+      initContainers:
+        - name: postgres  # sidecar
+          image: postgres:latest
+          restartPolicy: Always
+        - name: wait-for-postgres  # run to completion
+          image: postgres:latest
+          command: ""
