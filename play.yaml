@@ -31,11 +31,11 @@ spec:
           restartPolicy: Always
           env:
             - name: POSTGRES_USER
-              value: POSTGRES_USER
+              value: "POSTGRES_USER"
             - name: POSTGRES_DB
-              value: POSTGRES_DB
+              value: "POSTGRES_DB"
             - name: POSTGRES_PASSWORD
-              value: POSTGRES_PASSWORD
+              value: "POSTGRES_PASSWORD"
 
         - name: wait-for-postgres  # run to completion
           image: postgres:latest
@@ -50,9 +50,9 @@ spec:
               done
           env:
             - name: POSTGRES_USER
-              value: POSTGRES_USER
+              value: "POSTGRES_USER"
             - name: POSTGRES_DB
-              value: POSTGRES_DB
+              value: "POSTGRES_DB"
 
         - name: debian-container
           image: debian
